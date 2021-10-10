@@ -1,0 +1,209 @@
+---
+title: "MDA-Milestone1"
+author: "Irem YUCEL"
+date: "09/10/2021"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE}
+#install.packages("devtools")
+#devtools::install_github("UBC-MDS/datateachr")
+library(datateachr)
+library(tidyverse)
+```
+
+## Task 1: Choose your favorite dataset
+#### 1.1 Out of the 7 datasets available in the datateachr package, choose 4 that appeal to you based on their description. Write your choices below:
+
+##### 1: cancer_sample
+##### 2: vancouver_trees
+##### 3: steam_games
+##### 4: building_permits
+
+
+#### 1.2 One way to narrowing down your selection is to explore the datasets. Use your knowledge of dplyr to find out at least 3 attributes about each of these datasets (an attribute is something such as number of rows, variables, class type…). The goal here is to have an idea of what the data looks like.
+
+### Cancer Dataset
+
+```{r}
+glimpse(cancer_sample) 
+summary(cancer_sample) #Summary function returns numeric summaries for each *numeric* variable (columns) in the dataset.
+sapply(cancer_sample, class) #This line shows the class type of each variable in the dataset
+colSums(is.na(cancer_sample))#Number of missing values for each variable in steam games data
+```
+
+The cancer dataset has 569 rows and 32 columns. 
+`
+### Vancouver Trees Data
+
+```{r}
+glimpse(vancouver_trees) 
+summary(vancouver_trees)
+sapply(vancouver_trees, class)
+colSums(is.na(vancouver_trees))
+```
+
+Vancouver Trees dataset has 146,611 rows and 20 columns. 
+
+### Steam Games Data
+
+```{r}
+glimpse(steam_games) 
+summary(steam_games)
+sapply(steam_games, summary)
+colSums(is.na(steam_games)) 
+```
+
+Steam Games dataset has 40,833 rows and 21 columns. 
+
+
+
+### Building Permits Data
+
+```{r}
+glimpse(building_permits)
+summary(building_permits)
+sapply(building_permits, summary)
+colSums(is.na(building_permits))
+
+```
+
+Building Permits dataset has 20,680 rows and 14 columns
+
+
+#### 1.3 Now that you’ve explored the 4 datasets that you were initially most interested in, let’s narrow it down to 2. What lead you to choose these 2? Briefly explain your choices below, and feel free to include any code in your explanation.
+
+I chose Vancouver Trees and Building Permits dataset. The Cancer data does not have many samples ( `r nrow(cancer_sample)` ) and steam games data has many missing values `r sum(is.na(building_permits))`.
+
+#### 1.4 Time for the final decision! Going back to the beginning, it’s important to have an end goal in mind. For example, if I had chosen the titanic dataset for my project, I might’ve wanted to explore the relationship between survival and other variables. Try to think of 1 research question that you would want to answer with each dataset. Note them down below, and make your final choice based on what seems more interesting to you!
+
+In the building permits dataset, I wanted the see the relationship between project value and other few variables, such as postal code, building contractor (there are `r n_distinct(building_permits$building_contractor, na.rm = T)` contractors!) and issue date.
+
+## Task 2: Exploring your dataset
+
+
+#### 2.1 Complete 4 out of the following 8 exercises to dive deeper into your data. All datasets are different and therefore, not all of these tasks may make sense for your data - which is why you should only answer 4. Use dplyr and ggplot.
+
+#### 2.2 For each of the 4 exercises that you complete, provide a brief explanation of why you chose that exercise in relation to your data (in other words, why does it make sense to do that?), and sufficient comments for a reader to understand your reasoning and code.
+## Plot the distribution of a numeric variable.
+
+I want to look at the number of permits given in each year, and the distribution of project_value
+```{r}
+ggplot(building_permits, aes(x = year)) +
+  geom_histogram() 
+
+
+ggplot(building_permits, aes(x = project_value)) + 
+  geom_histogram() 
+
+```
+ This graph doesnt look so good, so I need to arrange the data, so many 0s and possibly NAs.
+
+## Make a new tibble with a subset of your data, with variables and observations that you are interested in exploring.
+
+Removing columns that I am not interested like contractor address or applicant information, and selecting the ones I am interested in.
+
+```{r}
+building_permits <- building_permits %>%
+  select(issue_date, project_value,address, building_contractor,year)
+```
+
+## Create a new variable based on other variables in your data (only if it makes sense)
+
+I want to investigate the relationship between project value and other variables, one of which is Postal Code, so I am creating a new column using the address column
+
+```{r}
+building_permits <- building_permits %>% #remove rows containing NA in address column
+  drop_na(address) 
+length(grep("BC", building_permits$address)) == nrow(building_permits) # Each row in the address column contains BC, so we can use BC as the separator for the new column, which is PostalCodes.
+
+building_permits2 = building_permits %>%
+  separate(address, c("adress", "PostalCode"), sep = "BC", remove = FALSE) %>% # create a new variable named PostalCode, separating the address column by BC
+  select(-adress) #drop the other new created column
+
+building_permits2[building_permits2 == ""] <- NA  #Replace the missing values  with NA, Some of the addresses do not have Postal Code indicated
+  
+sum(is.na(building_permits2$PostalCode)) #Number of missing values in the PostalCode
+```
+
+## Investigate how many missing values there are per variable. Can you find a way to plot this?
+
+To look at the relationship between the variables I chose, I need to remove the rows with NAs.
+```{r}
+permit_nas <-tibble(vars = colnames(building_permits2), NumNAs = colSums(is.na(building_permits2))) #Create a new tibble showing the number of NAs in each variable
+ggplot(permit_nas, aes(x = vars, y = NumNAs)) + # Using ggplot, plot the number of NAs
+  geom_point() +
+  geom_text(aes(label=NumNAs),hjust=0, vjust=0)+ #Label each point with NA count
+  coord_flip() #Flip the coordinates so it is easier to read
+
+```
+
+Now remove the rows containing NA values in Postal Code and Project Value columns:
+
+```{r}
+building_permits3 <- building_permits2 %>%
+  drop_na(c(PostalCode, project_value))
+```
+
+## Filter observations in your data according to your own criteria. 
+
+I want to look at the relationship within a year:
+
+```{r}
+building_permits3 %>% #Creating a tibble showing sample numbers per year:
+  group_by(year) %>%
+  summarise(n = n(), #Number of total samples
+            na = sum(is.na(PostalCode)),#Number of NA values in Postal Code
+            zero = sum(project_value == 0), # Number of 0s in Project Value
+            sampleSize = n-na-zero) #Number of remainig samples
+
+#The year 2018 has the most samples, so I will use the samples from that year.
+
+building_permits_2018 <- building_permits3 %>%
+  filter(year == 2018)
+```
+
+Explore the relationship between 2 variables in a plot.
+The relationship between Postal Code and Project Value
+
+```{r}
+#First clean the project value variable:
+
+#Number of NAs:
+sum(is.na(building_permits_2018$project_value))
+
+#Number of 0s:
+sum(building_permits_2018$project_value == 0)
+
+building_permits_2018 =  building_permits_2018 %>% #Remove the 0s from data
+  filter(project_value != 0) 
+
+building_permits_2018 =  building_permits_2018 %>% # #Since we have so many postal codes, we can group the postal codes by FSA code ( First 3 letters of Postal code) so that we will have a more meaningful graph
+  mutate(FSA = substr(PostalCode,1,4)) 
+
+
+means <- building_permits_2018 %>% #Now grouping the data by FSA and getting the mean project value for each FCA
+  group_by(FSA) %>%
+  summarise(mean = mean(project_value)) %>%
+  mutate(region = substr(FSA,1,3)) #Creating a region column to group the postal codes together.
+
+#Finalyy, plot the relationship!
+
+ggplot(means, aes(x = FSA, y = mean, colour = region)) +
+   geom_point() +
+   coord_flip()
+
+```
+
+## Task 3: Write your research questions
+
+1) Is there a correlation between the building contractor and project value? Would that indicate the budget of the contractor?
+2) Can we see that some of buildings with certain postal code are more related to a certain specific use category?
+3) How did the project values change over time for regions with different postal code?
+4) Is there a relationship between project value and property use? eg. Does it cost more to build offices or houses?
+
+
+
+
