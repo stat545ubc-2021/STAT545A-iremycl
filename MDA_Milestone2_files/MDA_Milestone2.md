@@ -78,7 +78,7 @@ ggplot(summary_top_contract,
        y = "Building Contractors")
 ```
 
-![](mini-project-2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](MDA_Milestone2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 From this graph we can see that there are differences between the mean
 project values of different contractors. Ledcor Construction Ltd. has
@@ -150,7 +150,7 @@ ggplot(top_postalcode, aes(
   geom_bar(position = "fill")
 ```
 
-![](mini-project-2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](MDA_Milestone2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 Properties in V1V and V6G are mainly used for Dwelling, and properties
 in V5Z and V7Y are mainly used for Retail. The rest has mainly office
@@ -211,7 +211,7 @@ ggplot(sub_projvalVStime, aes(
   theme(legend.position = "none")
 ```
 
-![](mini-project-2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](MDA_Milestone2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 For most of the FSA, the project values did not change much over the
 years.
@@ -250,7 +250,7 @@ ggplot(ProjvsPropUse, aes(x = property_use, y = log(project_value), color = prop
        y = "Log Project Value")
 ```
 
-![](mini-project-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](MDA_Milestone2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 The cost of buildings with different types of uses are more or less the
 same, and there is large variation with many outliers in each group.

@@ -6,7 +6,7 @@ This repository includes the work for the Mini Data Analysis project for STAT 54
 
 - [x] Milestone 1: Due October 9, 2021
 - [x] Milestone 2: Due October 19, 2021 
-- [ ] Milestone 3: Due October 28, 2021
+- [x] Milestone 3: Due October 28, 2021
 
 ## Learning Objectives 
 
@@ -37,9 +37,7 @@ I have 2 files for each Milestone:
 | :--- | ---: |
 | `MDA_Milestone1_files` | Contains Markdown, R Markdown files and figures for MDA-Milestone 1 |
 | `MDA_Milestone2_files` | Contains Markdown, R Markdown files and figures for MDA-Milestone 2 |
-
-
-
+| `MDA_Milestone3_files` | Contains Markdown, R Markdown files and figures for MDA-Milestone 3 |
 
 
 In each file, I have README, Markdown and R Markdown files:
@@ -50,6 +48,7 @@ In each file, I have README, Markdown and R Markdown files:
 | :--- | ---: |
 | `MDA_Milestone1.md` | Markdown file containing results for MDA-Milestone 1 |
 | `MDA_Milestone2.md` | Markdown file containing results for MDA-Milestone 2 |
+| `MDA_Milestone3.md` | Markdown file containing results for MDA-Milestone 3 |
 
 ### R Markdown files
 
@@ -57,6 +56,7 @@ In each file, I have README, Markdown and R Markdown files:
 | :--- | ---: |
 | `MDA_Milestone1.Rmd` | R Markdown of `Milestone1.md` |
 | `MDA_Milestone2.Rmd` | R Markdown of `Milestone2.md` |
+| `MDA_Milestone3.Rmd` | R Markdown of `Milestone3.md` |
 
 ### Other files/directories
 
@@ -65,4 +65,6 @@ In each file, I have README, Markdown and R Markdown files:
 | `README.md` | README file to describe the milestones and files in the repository. |
 | `MDA_Milestone1_files` | Directory containing figures for `Milestone1.md` | 
 | `MDA_Milestone2_files` | Directory containing figures for `Milestone2.md` | 
+| `MDA_Milestone3_files` | Directory containing figures for `Milestone3.md` | 
+| `other` | Directory containing output files, final csv file from `Milestone2.md` and model from `Milestone3.md` | 
 | `.gitignore` | Git instructions about the files to ignore | 
